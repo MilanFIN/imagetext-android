@@ -85,13 +85,15 @@ export default class Camera extends PureComponent {
   
   
   
-          <View style={{   width: "10%", height: "15%",     alignSelf: 'center', }}>
+          <View style={{   width: "15%", height: "20%",     alignSelf: 'center',  justifyContent: "center"}}>
           <Button
             mode="contained"
             color="#0000DD"
   
-            style={{borderRadius: 100,
-              transform: [{ rotate: this.state.rotation.toString()+'deg' }]}}
+            style={{borderRadius: 1000,
+                  //minWidth: "10%",
+                  //minHeight: "10%"
+            }}
             onPress={this.takePicture}
             
           >
@@ -136,7 +138,7 @@ export default class Camera extends PureComponent {
       >
 
 
-<View style={{flex: 1, flexDirection: 'column'}}>
+<View style={{flex: 1, flexDirection: 'row'}}>
   
   <View style={{width: "10%", height: "15%",  aspectRatio: 1,  alignSelf: "flex-start", marginTop: "5%", marginLeft: "10%"}}>
     <Button
@@ -156,7 +158,8 @@ export default class Camera extends PureComponent {
   
   
   
-  <View style={{   width: "10%", height: "15%",     alignSelf: 'flex-end', marginTop: "10%", marginRight: "5%"}}>
+  <View style={{ flex:1, flexDirection:"column", width: "10%", height: "15%",     alignSelf: 'center', justifyContent:"flex-end",  marginTop: "0%", marginRight: "5%"}}>
+  <View style={{ alignSelf:"flex-end"}}>
   <Button
     mode="contained"
     color="#0000DD"
@@ -167,6 +170,9 @@ export default class Camera extends PureComponent {
   >
     <Icon name="camera" size={30} color="#fff" />
   </Button>
+
+
+  </View>
 
 
   </View>  

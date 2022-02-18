@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 
 import Camera from './Camera';
 
-import {ActivityIndicator,  BackHandler,  Buon, Image, ImageBackground, ImageProps, ImageSourcePropType, ImageURISource, SafeAreaView,  TextInput, View, Dimensions} from 'react-native';
+import {ActivityIndicator,  BackHandler,  Buon, Image, ImageBackground, ImageProps, ImageSourcePropType, ImageURISource, SafeAreaView,  TextInput, View, Dimensions, StyleSheet, TouchableOpacity, Linking} from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Button, Text } from 'react-native-paper';
@@ -173,50 +173,56 @@ const App = () => {
 
     )
   }
-  //// justifyContent: 'flex-end', marginBottom: "10%"}}>
-  /*
-                <View style={{width: "25%", height: "10%",     alignSelf: 'center', }}>
-               <Button title="back" onPress={onBackToCamera}></Button>
-
-            </View>
-
-  */
- //                <Button title="send" onPress={sendImage} color="#0000DD"></Button>
-//               <Button title="back" onPress={goBack} color="#0000DD"></Button>
 
   else if (img != null && view == "confirm") { //
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, backgroundColor: "#000"}}>
 
-           <ImageBackground source={img} style={{flex: 1}}>
+           <ImageBackground resizeMode="contain" source={img} style={{flex: 1}}>
 
+           <View style={{width:"50%", height:"7%", backgroundColor:"#00F", alignSelf:"center", marginTop: "5%",flexDirection:"row"}}>
+                <Text>
+                  Is the text bright or dark?
+                </Text>
+                <Button
+                    mode="contained"
+                    color="#0000DD"
+
+                    style={styles.button}
+                    onPress={goBack}
+                    
+                  >
+                    <Icon name="cancel" size={30} color="#fff" />
+                  </Button>
+              </View>
             <View style={{flex: 1, flexDirection:"row", justifyContent: 'center', marginBottom: "5%"}}>
 
-              <View style={{width: "15%", height: "15%",     alignSelf: "flex-end", marginRight: "5%" }}>
 
-               <Button
-                  mode="contained"
-                  color="#0000DD"
-
-                  style={{borderRadius: 100}}
-                  onPress={goBack}
-                  
-                >
-                  <Icon name="cancel" size={30} color="#fff" />
-                </Button>
-              </View>
-              <View style={{width: "15%", height: "15%",     alignSelf: 'flex-end', marginRight: "5%"}}>
+              <View style={{justifyContent: "center", flex:1, flexDirection:"row"}}>
+                <View style={{width: "15%", height: "15%", alignSelf:"flex-end", margin:"3%"}}>
                 <Button
-                  mode="contained"
-                  color="#0000DD"
+                    mode="contained"
+                    color="#0000DD"
 
-                  style={{borderRadius: 100}}
-                  onPress={sendImage}
-                  
-                >
-                  <Icon name="check-bold" size={30} color="#fff" />
-                </Button>
+                    style={styles.button}
+                    onPress={goBack}
+                    
+                  >
+                    <Icon name="cancel" size={30} color="#fff" />
+                  </Button>
+                </View>
+                <View style={{width: "15%", height: "15%", alignSelf:"flex-end", margin:"3%"}}>
+                  <Button
+                    mode="contained"
+                    color="#0000DD"
 
+                    style={styles.button}
+                    onPress={sendImage}
+                    
+                  >
+                    <Icon name="check-bold" size={30} color="#fff" />
+                  </Button>
+              </View>
 
 
               </View>
@@ -236,30 +242,27 @@ const App = () => {
   
   else if (view == "loading") {
     return (
-      <View         
-        style={{
-          flex:1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          margin: 0,
-          backgroundColor: "#000000"
-        }}
+      <SafeAreaView         
+        style={styles.safeArea}
       >
       <Text>Loading</Text>
       <ActivityIndicator size="large" color="00dd00"/>
       
-      </View>
+      </SafeAreaView>
 
     )
   }
   else if (view == "result") {
     return (
 
-      <View         
+      <SafeAreaView         
         style={{
           flex: 1,
           backgroundColor: "#000000",
           flexDirection:"column",
+          justifyContent: 'center',
+          alignItems: 'center',
+
         }}
       >
         <View
@@ -269,7 +272,7 @@ const App = () => {
           }}>
 
         <TextInput value={text} multiline={true} 
-            style={{ flex: 1, padding:5, color:"#FFFFFF",  width:'100%',backgroundColor:"#111", }}
+            style={{ fontSize: 15, flex: 1, padding:5, color:"#FFFFFF",  width:'100%',backgroundColor:"#111", }}
             onChangeText={resultChange}
         />
 
@@ -282,7 +285,7 @@ const App = () => {
                   mode="contained"
                   color="#0000DD"
 
-                  style={{borderRadius: 100}}
+                  style={styles.button}
                   onPress={goBack}
                   
                 >
@@ -296,71 +299,93 @@ const App = () => {
 
   
           
-      </View>
+      </SafeAreaView>
     )
   
   }
-  else if (view == "info") { return (
+  else if (view == "info") { 
+    return (
 
-    <View         
-    style={{
-      flex: 1,
-      backgroundColor: "#000000",
-      flexDirection:"column",
-    }}
-  >
-    <View
-      style={{ flex: 1, height:"100%", backgroundColor: "#111",
-        borderColor: '#fff',  borderRadius: 5, borderWidth: 1, width: "80%", justifyContent: "center",alignSelf:"center",
-        marginTop:"5%"
-      }}>
-
-    <Text 
-        style={{ flex: 1, padding:5, color:"#FFFFFF",  width:'100%',backgroundColor:"#111", }}>
-      {`
-      Here is gonna be ~
-      some info in the future ~
-      Now with line changes
-      `}  
-    </Text>
-
-    </View>
-
-
-    <View style={{ height: "15%", justifyContent: "flex-end", marginBottom: "5%"}}>
-      <View style={{alignSelf: 'center',width: "15%", }}>
-      <Button
-        mode="contained"
-        color="#0000DD"
-
-        style={{borderRadius: 100}}
-        onPress={goBack}
-        
+    <SafeAreaView         
+    style={
+      styles.safeArea
+    }
       >
-        <Icon name="chevron-left" size={30} color="#fff" />
-      </Button>
+      <View
+        style={{ flex: 1, height:"100%", backgroundColor: "#111",
+          borderColor: '#fff',  borderRadius: 5, borderWidth: 1, width: "80%", justifyContent: "center",alignSelf:"center",
+          marginTop:"5%"
+        }}>
+
+      <Text 
+          style={{ fontSize: 20, flex: 1, padding:5, color:"#FFFFFF",  width:'100%',backgroundColor:"#111", }}>
+{`
+This is an app that can take pictures and attempts to parse text from them.
+A presumption is made, that the text is darker than the background.
+The program requires access to the camera & network, as text detection is done on the backend.
+
+Licensed under MIT, see github repository:
+`}  
+        <TouchableOpacity onPress={() => Linking.openURL('https://github.com/MilanFIN/imagetext-android')}>
+          <Text style={{fontSize: 30, color: 'lightblue'}}>here</Text>
+        </TouchableOpacity>
+
+      </Text>
 
 
       </View>
 
-        
-    </View>
+
+      <View style={{ height: "15%", justifyContent: "flex-end", marginBottom: "5%"}}>
+        <View style={{alignSelf: 'center',width: "15%", }}>
+        <Button
+          mode="contained"
+          color="#0000DD"
+
+          style={styles.button}
+          onPress={goBack}
+          
+        >
+          <Icon name="chevron-left" size={30} color="#fff" />
+        </Button>
+
+
+        </View>
+
+          
+      </View>
 
 
       
-  </View>
-  )
+    </SafeAreaView>
+    )
   }
   else {
     return (
-    <View
-      style = {{flex: 1 ,backgroundColor: "#000000" ,       flexDirection:"column",   }}
+    <SafeAreaView
+      style = {styles.safeArea}
       
     >
 
-    </View>
+    </SafeAreaView>
     )
   }
   
 }
+
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#000000",
+    flexDirection:"column",
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button: {
+    borderRadius: 100
+  }
+});
+
+
 export default App;
