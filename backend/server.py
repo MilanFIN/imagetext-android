@@ -15,15 +15,17 @@ def TimestampMillisec64():
 
 
 
-def getText(img):
+def getText(img, brightText):
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #
 
 
 	limit = int(cv2.mean(gray)[0]	)
 
 
-	th, threshed = cv2.threshold(gray, limit, 255, cv2.THRESH_BINARY_INV|cv2.THRESH_OTSU)
-
+	if (brightText):
+		th, threshed = cv2.threshold(gray, limit, 255, cv2.THRESH_BINARY_INV) #|cv2.THRESH_OTSU
+	else:
+		th, threshed = cv2.threshold(gray, limit, 255, cv2.THRESH_BINARY)
 
 
 	# find bounding rect around "text"
@@ -69,6 +71,12 @@ app = Flask(__name__)
 @app.route('/',methods = ["GET", "POST"])
 def text():
 	if  request.method == "POST":
+		bright = request.headers.get('brighttext')
+		brightText = False
+		if (bright == "1"):
+			brightText = True
+		print(brightText)
+
 		start = TimestampMillisec64()
 		fileStr = request.files["photo"].read()
 		npimg = np.fromstring(fileStr, np.uint8)
@@ -78,7 +86,7 @@ def text():
 		## read image
 		#img = cv2.imread("./images/"+"example.jpg") 
 
-		text = getText(img)
+		text = getText(img, brightText)
 
 		response = jsonify(text)
 		response.headers.add('Access-Control-Allow-Origin', '*')

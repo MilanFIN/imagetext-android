@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 
 import Camera from './Camera';
 
-import {ActivityIndicator,  BackHandler,  Buon, Image, ImageBackground, ImageProps, ImageSourcePropType, ImageURISource, SafeAreaView,  TextInput, View, Dimensions, StyleSheet, TouchableOpacity, Linking} from 'react-native';
+import {ActivityIndicator,  BackHandler,  Switch, ImageBackground, ImageProps, ImageSourcePropType, ImageURISource, SafeAreaView,  TextInput, View, Dimensions, StyleSheet, TouchableOpacity, Linking} from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Button, Text } from 'react-native-paper';
@@ -11,7 +11,7 @@ import { Button, Text } from 'react-native-paper';
 
 import ImageResizer from 'react-native-image-resizer';
 
-const PYTORCH_SERVER_HOST="http://asdf.dy.fi:5000"
+const PYTORCH_SERVER_HOST="http://asdf.dy.fi:5000" //"http://10.0.2.2:5000"
 
 
 const App = () => {
@@ -19,6 +19,9 @@ const App = () => {
   const [img, setImg] = useState<ImageURISource | null>(null);
   const [view, setView] = useState("camera")
   const [text, setText] = useState("");
+
+  const [brightText, setBrightText] = useState(false);
+  const toggleSwitch = () => setBrightText(previousState => !previousState);
 
 
 
@@ -94,7 +97,10 @@ const App = () => {
         formData.append('photo',  photo)
   
       
-       
+        console.log(brightText)
+        //true if text is to be presumed to be bright
+        // otherwise dark
+        let brightString = brightText ? "1" : "0"       
       
       
         const controller = new AbortController()
@@ -103,7 +109,11 @@ const App = () => {
         const timeoutId = setTimeout(() => controller.abort(), 20000)
       
         fetch(PYTORCH_SERVER_HOST, 
-          { signal: controller.signal ,method: "POST", body: formData }) //, body: formData
+          { signal: controller.signal ,method: "POST", body: formData, 
+            headers: {
+              "brighttext": brightString
+            } 
+        }) //, body: formData
           .then(async res => {
             let data = await res.json()
             setText(data)
@@ -180,20 +190,19 @@ const App = () => {
 
            <ImageBackground resizeMode="contain" source={img} style={{flex: 1}}>
 
-           <View style={{width:"50%", height:"7%", backgroundColor:"#00F", alignSelf:"center", marginTop: "5%",flexDirection:"row"}}>
-                <Text>
-                  Is the text bright or dark?
+           <View style={{borderRadius:100, backgroundColor:"#00F", alignSelf:"center", marginTop: "5%", justifyContent:"space-around", flexDirection: "row"}}>
+                <Text style={{fontSize: 16, color:"white",  alignSelf: "center", marginLeft:"5%", marginRight: "5%", marginBottom: "2%", marginTop:"2%"}}>
+                   {`The text is `}
+                   <Text style={{fontSize: 16, color: "white", alignSelf: "center", fontWeight: "bold"}}>
+                {brightText ? "bright" : `dark`}
                 </Text>
-                <Button
-                    mode="contained"
-                    color="#0000DD"
 
-                    style={styles.button}
-                    onPress={goBack}
-                    
-                  >
-                    <Icon name="cancel" size={30} color="#fff" />
-                  </Button>
+                </Text>
+                <Switch
+                        onValueChange={toggleSwitch}
+                        value={brightText}
+                        style={{marginRight: "5%"}}
+                />
               </View>
             <View style={{flex: 1, flexDirection:"row", justifyContent: 'center', marginBottom: "5%"}}>
 
@@ -318,11 +327,15 @@ const App = () => {
         }}>
 
       <Text 
-          style={{ fontSize: 20, flex: 1, padding:5, color:"#FFFFFF",  width:'100%',backgroundColor:"#111", }}>
+          style={{ fontSize: 18, flex: 1, padding:5, color:"#FFFFFF",  width:'100%',backgroundColor:"#111", }}>
 {`
 This is an app that can take pictures and attempts to parse text from them.
-A presumption is made, that the text is darker than the background.
-The program requires access to the camera & network, as text detection is done on the backend.
+
+After taking an image one can toggle a switch to define if the text is bright/dark. If results are bad, flipping it might work.
+
+Try to capture images from up close with the text clearly visible & oriented horizontally
+
+The program requires access to the camera & network, as text detection is done on a remote server.
 
 Licensed under MIT, see github repository:
 `}  
